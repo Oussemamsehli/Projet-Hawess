@@ -316,9 +316,6 @@ $camping = $campingC->getCamping($_GET['id']);
               <div class="col-12 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-
-
-                  <!--modifier-->
                     <h4 class="card-title">Modifier un camping</h4>
                     <form id="myForm" class="forms-sample" action="editCamping.php" method="post">
                     <input hidden type="text" class="form-control" name="idCamping" value="<?php echo $camping['idCamping']; ?>">

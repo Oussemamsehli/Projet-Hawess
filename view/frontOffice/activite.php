@@ -1,8 +1,11 @@
 <?php
+require('../../controller/ActivitesController');
 require('../../controller/CampingController');
 
 $campingC = new CampingController();
-$campings = $campingC->showCampings();
+$actC = new ActivitesController();
+$activities = $actC->joinCamping($_GET['id']);
+$camping = $campingC->getCamping($_GET['id']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -131,26 +134,24 @@ $campings = $campingC->showCampings();
         <div class="container-fluid packages py-5">
             <div class="container py-5">
                 <div class="mx-auto text-center mb-5" style="max-width: 900px;">
-                    <h5 class="section-title px-3">Campings</h5>
-                    <h1 class="mb-0">Choisir un camping</h1>
+                    <h5 class="section-title px-3">Camping : <?php echo $camping['titre']; ?></h5>
+                    <h1 class="mb-0">Liste des activités</1>
                 </div>
                 <div class="packages-carousel owl-carousel">
                 <?php 
-                            if (!empty($campings)) {
-                            foreach($campings as $camping){ ?>
+                            if (!empty($activities)) {
+                            foreach($activities as $activite){ ?>
                     <div class="packages-item">
                         <div class="packages-img">
-                            <img src="../images/<?php echo $camping['image']; ?>" class="img-fluid w-100 rounded-top" alt="Image">
+                            <img src="../images/<?php echo $activite['image']; ?>" class="img-fluid w-100 rounded-top" alt="Image">
                             <div class="packages-info d-flex border border-start-0 border-end-0 position-absolute" style="width: 100%; bottom: 0; left: 0; z-index: 5;">
-                                <small class="flex-fill text-center border-end py-2"><i class="fa fa-calendar-alt me-2"></i><?php echo $camping['date_debut']; ?></small>
-                                <small class="flex-fill text-center py-2"><i class="fa fa-user me-2"></i><?php echo $camping['place']; ?> Person</small>
+                                <small class="flex-fill text-center border-end py-2"><i class="fa fa-calendar-alt me-2"></i><?php echo $activite['heure_debut']; ?> | <?php echo $activite['heure_fin']; ?></small>
+                                <small class="flex-fill text-center py-2"><i class="fa fa-user me-2"></i><?php echo $activite['place']; ?> Person</small>
                             </div>
-                            <div class="packages-price py-2 px-4">$<?php echo $camping['prix']; ?></div>
                         </div>
                         <div class="packages-content bg-light">
                             <div class="p-4 pb-0">
-                                <h5 class="mb-0"><a href="activite.php?id=<?php echo $camping['idCamping']; ?>"><?php echo $camping['titre']; ?></a></h5>
-                                <small class="text-uppercase"><?php echo $camping['adresse']; ?></small>
+                                <h5 class="mb-0"><?php echo $activite['titre']; ?></h5>
                                 <div class="mb-3">
                                     <small class="fa fa-star text-primary"></small>
                                     <small class="fa fa-star text-primary"></small>
@@ -158,11 +159,11 @@ $campings = $campingC->showCampings();
                                     <small class="fa fa-star text-primary"></small>
                                     <small class="fa fa-star text-primary"></small>
                                 </div>
-                                <p class="mb-4"><?php echo $camping['description']; ?></p>
+                                <p class="mb-4"><?php echo $activite['description']; ?></p>
                             </div>
                             <div class="row bg-primary rounded-bottom mx-0">
                                 <div class="col-6 text-end px-0">
-                                    <a href="#" class="btn-hover btn text-white py-2 px-4">Réserver</a>
+                                    <a href="#" class="btn-hover btn text-white py-2 px-4">Participer</a>
                                 </div>
                             </div>
                         </div>

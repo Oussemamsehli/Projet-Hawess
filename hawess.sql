@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : dim. 14 avr. 2024 à 00:23
+-- Généré le : dim. 21 avr. 2024 à 23:27
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -20,6 +20,30 @@ SET time_zone = "+00:00";
 --
 -- Base de données : `hawess`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `activites`
+--
+
+CREATE TABLE `activites` (
+  `idActivite` int(11) NOT NULL,
+  `titre` varchar(255) NOT NULL,
+  `description` text NOT NULL,
+  `heure_debut` time NOT NULL DEFAULT current_timestamp(),
+  `heure_fin` time NOT NULL DEFAULT current_timestamp(),
+  `place` int(11) NOT NULL,
+  `image` varchar(255) NOT NULL,
+  `camping` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `activites`
+--
+
+INSERT INTO `activites` (`idActivite`, `titre`, `description`, `heure_debut`, `heure_fin`, `place`, `image`, `camping`) VALUES
+(8, 'hjbbhjbjhb', 'iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii', '20:39:00', '22:39:00', 7, '111074799-bdfbcf00-84dc-11eb-98c0-d40a99aa0da7.png', 4);
 
 -- --------------------------------------------------------
 
@@ -44,11 +68,18 @@ CREATE TABLE `campings` (
 --
 
 INSERT INTO `campings` (`idCamping`, `titre`, `description`, `adresse`, `date_debut`, `date_fin`, `place`, `prix`, `image`) VALUES
-(1, 'qsdqsd', 'qsdqsdqsdqsdqsd qsdhbqjs dqs dhjqsd jqsd jhqsd jq sd', 'qsdqsdqsd', '2024-04-14', '2024-04-26', 1313, 12, 'flutter-1200x900.png');
+(4, 'Test', 'cclass=\"btn btn-primary mr-2\"class=\"btn btn-primary mr-2\"class=\"btn btn-primary mr-2\"class=\"btn btn-primary mr-2\"', 'sdsdfsdfsdf', '2024-04-21', '2024-04-27', 321, 321321, 'ecmascript.png');
 
 --
 -- Index pour les tables déchargées
 --
+
+--
+-- Index pour la table `activites`
+--
+ALTER TABLE `activites`
+  ADD PRIMARY KEY (`idActivite`),
+  ADD KEY `camping` (`camping`);
 
 --
 -- Index pour la table `campings`
@@ -61,10 +92,26 @@ ALTER TABLE `campings`
 --
 
 --
+-- AUTO_INCREMENT pour la table `activites`
+--
+ALTER TABLE `activites`
+  MODIFY `idActivite` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
 -- AUTO_INCREMENT pour la table `campings`
 --
 ALTER TABLE `campings`
-  MODIFY `idCamping` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `idCamping` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- Contraintes pour les tables déchargées
+--
+
+--
+-- Contraintes pour la table `activites`
+--
+ALTER TABLE `activites`
+  ADD CONSTRAINT `camping` FOREIGN KEY (`camping`) REFERENCES `campings` (`idCamping`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

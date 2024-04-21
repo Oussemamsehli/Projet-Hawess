@@ -1,7 +1,7 @@
 <?php
 require('../../controller/CampingController');
 
-$campingC = new CampingController();
-$campingC->deleteCamping($_GET['id']);
+$campC = new CampingController();
+$campC->deleteCamping($_GET['id']);
 header('Location: campingBack.php');
 ?>

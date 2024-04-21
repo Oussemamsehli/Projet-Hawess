@@ -1,13 +1,14 @@
 <?php
-require('../../controller/CampingController');
+require('../../controller/ActivitesController');
 
-$campingC = new CampingController();
-if( isset($_POST['titre']) && isset($_POST['description']) && isset($_POST['adresse']) && isset($_POST['date_debut']) && isset($_POST['date_fin']) && isset($_POST['place']) && isset($_POST['prix']) && isset($_POST['image'])){
-    $camping = new Camping($_POST['titre'],$_POST['description'],$_POST['adresse'],$_POST['date_debut'],$_POST['date_fin'],$_POST['prix'],$_POST['place'],$_POST['image']);
-    $campingC->addCamping($camping);
-    header('Location: campingBack.php');
+$actC = new ActivitesController();
+if( isset($_POST['idAct']) && isset($_POST['idCamping']) && isset($_POST['titre']) && isset($_POST['description']) && isset($_POST['heure_debut']) && isset($_POST['heure_fin']) && isset($_POST['place']) && isset($_POST['image'])){
+    $activite = new Activite($_POST['titre'],$_POST['description'],$_POST['heure_debut'],$_POST['heure_fin'],$_POST['place'],$_POST['image'],$_POST['idCamping']);
+    $actC->updateActivities($_POST['idAct'],$activite);
+    header('Location: activiteBack.php?idCamping='.$_POST['idCamping']);
 }
-$campings = $campingC->showCampings();
+if(isset($_GET['id']))
+$activitie = $actC->getActivities($_GET['id']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -309,211 +310,115 @@ $campings = $campingC->showCampings();
         <div class="main-panel">
           <div class="content-wrapper">
             <div class="page-header">
-              <h3 class="page-title"> Campings </h3>
+              <h3 class="page-title"> Activités </h3>
             </div>
             <div class="row">
               <div class="col-12 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    <h4 class="card-title">Ajouter un camping</h4>
-                    <form id="myForm" class="forms-sample" action="campingBack.php" method="post">
+                    <h4 class="card-title">Modifier une activité</h4>
+                    <form id="myForm" class="forms-sample" action="editActivite.php" method="post">
+                    <input type="text" name="idCamping" value="<?php echo $activitie['camping']; ?>" hidden>
+                      <input type="text" name="idAct" value="<?php echo $_GET['id']; ?>" hidden>
                       <div class="form-group">
                         <label for="titre">Titre</label>
-                        <input type="text" class="form-control" id="titre" name="titre" placeholder="Titre">
+                        <input type="text" class="form-control" id="titre" name="titre" placeholder="Titre" value="<?php echo $activitie['titre']; ?>">
                         <span id="errorTitre"></span>
                       </div>
                       <div class="form-group">
                         <label for="Descrition">Descrition</label>
-                        <textarea class="form-control" id="description" name="description" rows="4"></textarea>
+                        <textarea class="form-control" id="description" name="description" rows="4"><?php echo $activitie['description']; ?></textarea>
                         <span id="errorDescription"></span>
                       </div>
                       <div class="form-group">
-                        <label for="adresse">Adresse</label>
-                        <input type="text" class="form-control" id="adresse" name="adresse" placeholder="Adresse">
-                        <span id="errorAdresse"></span>
+                        <label for="heure_debut">Heure Début</label>
+                        <input type="time" class="form-control" id="heure_debut" name="heure_debut" value="<?php echo date('H:i', strtotime($activitie['heure_debut'])) ?>">
+                        <span id="errorHeureDebut"></span>
                       </div>
                       <div class="form-group">
-                        <label for="date_debut">Date Debut</label>
-                        <input type="date" class="form-control" id="date_debut" name="date_debut">
-                        <span id="errorDateDebut"></span>
-                      </div>
-                      <div class="form-group">
-                        <label for="date_fin">Date Fin</label>
-                        <input type="date" class="form-control" id="date_fin" name="date_fin">
-                        <span id="errorDateFin"></span>
+                        <label for="heure_fin">Heure Fin</label>
+                        <input type="time" class="form-control" id="heure_fin" name="heure_fin" value="<?php echo date('H:i', strtotime($activitie['heure_fin'])); ?>">
+                        <span id="errorHeureFin"></span>
                       </div>
                       <div class="form-group">
                         <label for="place">Nombre de place</label>
-                        <input type="text" class="form-control" id="place" name="place" placeholder="Nombre de place">
+                        <input type="text" class="form-control" id="place" name="place" placeholder="Nombre de place" value="<?php echo $activitie['place']; ?>">
                         <span id="errorNbrPlace"></span>
                       </div>
                       <div class="form-group">
-                        <label for="prix">Prix</label>
-                        <input type="text" class="form-control" id="prix" name="prix" placeholder="Prix">
-                        <span id="errorPrix"></span>
-                      </div>
-                      <div class="form-group">
                         <label>Ajouter une image</label>
-                        <input type="file" id="image" name="image" class="file-upload-default">
+                        <input type="file" class="file-upload-default">
                         <div class="input-group col-xs-12">
-                          <input  type="text" class="form-control file-upload-info" disabled placeholder="Upload Image">
+                          <input type="text" id="image" name="image" class="form-control file-upload-info" placeholder="Upload Image" value="<?php echo $activitie['image']; ?>">
                           <span class="input-group-append">
                             <button class="file-upload-browse btn btn-primary" type="button">Upload</button>
                           </span>
                         </div>
                         <span id="errorImage"></span>
                       </div>
-                      <button type="submit" class="btn btn-primary mr-2">Ajouter</button>
+                      <button type="submit" class="btn btn-primary mr-2">Modifier</button>
                     </form>
                     <script>
-                      // Contrôle de saisie
-                      let myForm = document.getElementById('myForm');
+                        let myForm = document.getElementById('myForm');
+                        myForm.addEventListener('submit', function (e) {
+                            resetErrorMessages();
 
-                      myForm.addEventListener('submit', function (e) {
-                          let titre = document.getElementById('titre');
-                          let description = document.getElementById('description');
-                          let adresse = document.getElementById('adresse');
-                          let dateDebut = document.getElementById('date_debut');
-                          let dateFin = document.getElementById('date_fin');
-                          let place = document.getElementById('place');
-                          let prix = document.getElementById('prix');
-                          let image = document.getElementById('image');
+                            let titre = document.getElementById('titre');
+                            let description = document.getElementById('description');
+                            let heureDebut = document.getElementById('heure_debut');
+                            let heureFin = document.getElementById('heure_fin');
+                            let place = document.getElementById('place');
+                            let image = document.getElementById('image');
 
-                          // Réinitialisation des messages d'erreur
-                          resetErrorMessages();
+                            let isValid = true;
 
-                          let isValid = true;
+                            if (titre.value.trim() === '') {
+                                setError('errorTitre', "Le champ titre est obligatoire");
+                                isValid = false;
+                            }
 
-                          // Vérification du champ titre
-                          if (titre.value.trim() === '') {
-                              setError('errorTitre', "Le champ titre est obligatoire");
-                              isValid = false;
-                          }
+                            if (description.value.trim().length < 20) {
+                                setError('errorDescription', "Le champ description doit contenir au moins 20 caractères");
+                                isValid = false;
+                            }
 
-                          // Vérification du champ description
-                          if (description.value.trim().length < 20) {
-                              setError('errorDescription', "Le champ description doit contenir au moins 20 caractères");
-                              isValid = false;
-                          }
+                            if (heureDebut.value >= heureFin.value) {
+                                setError('errorHeureFin', "L'heure de fin doit être postérieure à l'heure de début");
+                                isValid = false;
+                            }
 
-                          // Vérification du champ adresse
-                          if (adresse.value.trim() === '') {
-                              setError('errorAdresse', "Le champ adresse est obligatoire");
-                              isValid = false;
-                          }
+                            if (!/^\d+$/.test(place.value) || parseInt(place.value) <= 0) {
+                                setError('errorNbrPlace', "Le champ nombre de place doit contenir uniquement des chiffres positifs");
+                                isValid = false;
+                            }
 
-                          // Vérification des dates
-                          let startDate = new Date(dateDebut.value);
-                          let endDate = new Date(dateFin.value);
-                          let currentDate = new Date();
+                            let allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif)$/i;
+                            if (!allowedExtensions.exec(image.value)) {
+                                setError('errorImage', "Le fichier doit être une image de type JPG, JPEG, PNG ou GIF");
+                                isValid = false;
+                            }
 
-                          if (startDate >= endDate) {
-                              setError('errorDateFin', "La date de fin doit être postérieure à la date de début");
-                              isValid = false;
-                          }
+                            if (!isValid) {
+                                e.preventDefault();
+                            }
+                        });
 
-                          if (startDate <= currentDate) {
-                              setError('errorDateDebut', "La date de début doit être ultérieure à la date actuelle");
-                              isValid = false;
-                          }
-
-                          // Vérification du nombre de place
-                          if (!/^[0-9]+$/.test(place.value) || parseInt(place.value) <= 0) {
-                              setError('errorNbrPlace', "Le champ nombre de place doit contenir uniquement des chiffres et être supérieur à 0");
-                              isValid = false;
-                          }
-
-                          // Vérification du champ prix
-                          if (!/^\d*\.?\d*$/.test(prix.value)) {
-                              setError('errorPrix', "Le champ prix doit contenir uniquement des chiffres ou des décimales");
-                              isValid = false;
-                          }
-
-                          // Vérification du champ image
-                          if (image.value.trim() === '') {
-                              setError('errorImage', "Le champ image est obligatoire");
-                              isValid = false;
-                          }
-
-                          // Si le formulaire n'est pas valide, on empêche sa soumission
-                          if (!isValid) {
-                              e.preventDefault();
-                          }
-                      });
-
-                      // Fonction pour afficher les messages d'erreur
-                      function setError(id, errorMessage) {
-                          let errorElement = document.getElementById(id);
-                          errorElement.innerHTML = errorMessage;
-                          errorElement.style.color = 'red';
-                      }
-
-                      // Fonction pour réinitialiser les messages d'erreur
-                      function resetErrorMessages() {
-                          let errorElements = document.querySelectorAll('[id^="error"]');
-                          errorElements.forEach(function (element) {
-                              element.innerHTML = '';
-                          });
-                      }
-                  </script>
-
-                  </div>
-                </div>
-              </div>
-              <!--- affichage -->
-              <div class="col-lg-12 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title">Liste des campings</h4>
-                    </p>
-                    <div class="table-responsive">
-                      <table class="table">
-                        <thead>
-                          <tr>
-                            <th>#ID</th>
-                            <th>Titre</th>
-                            <th>Description</th>
-                            <th>Adresse</th>
-                            <th>Date Début</th>
-                            <th>Date Fin</th>
-                            <th>Nombre de place</th>
-                            <th>Prix</th>
-                            <th>Image</th>
-                            <th>Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <?php 
-                            if (!empty($campings)) {
-                            foreach($campings as $camping){ ?>
-                          <tr>
-                            <td><?php echo $camping['idCamping']; ?></td>
-                            <td><?php echo $camping['titre']; ?></td>
-                            <td><?php echo $camping['description']; ?></td>
-                            <td><?php echo $camping['adresse']; ?></td>
-                            <td><?php echo $camping['date_debut']; ?></td>
-                            <td><?php echo $camping['date_fin']; ?></td>
-                            <td><?php echo $camping['place']; ?></td>
-                            <td><?php echo $camping['prix']; ?></td>
-                            <td><img src="../images/<?php echo $camping['image']; ?>" style="width: 60px; height: 60px;" ></td>
-                            <td><a class="btn btn-primary mr-2" href="activiteBack.php?idCamping=<?php echo $camping['idCamping']; ?>">Activité</a> <a class="btn btn-primary mr-2" href="editCamping.php?id=<?php echo $camping['idCamping']; ?>">Modifier</a> <button class="btn btn-primary mr-2" onclick="confirmDelete(<?php echo $camping['idCamping']; ?>, 'deleteCamping.php')">Supprimer</button></td>
-                          </tr>
-                          <?php }} ?>
-                        </tbody>
-                      </table>
-                      <script>
-                        function confirmDelete(articleId, redirectUrl) {
-                        var confirmation = confirm("Êtes-vous sûr de vouloir supprimer cet camping ?");
-                        if (confirmation) {
-                            window.location.href = redirectUrl + "?id=" + articleId;
+                        function setError(id, errorMessage) {
+                            let errorElement = document.getElementById(id);
+                            errorElement.innerHTML = errorMessage;
+                            errorElement.style.color = 'red';
                         }
-                      } 
-                      </script>
-                    </div>
+
+                        function resetErrorMessages() {
+                            let errorElements = document.querySelectorAll('[id^="error"]');
+                            errorElements.forEach(function (element) {
+                                element.innerHTML = '';
+                            });
+                        }
+                    </script>
                   </div>
                 </div>
-              </div>
-              
+              </div>              
             </div>
           </div>
           <!-- content-wrapper ends -->

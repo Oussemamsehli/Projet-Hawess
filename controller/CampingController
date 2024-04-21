@@ -54,8 +54,8 @@ public function getCamping($id){
         $query = $db->prepare($sql);
         $query->bindValue(':id' , $id);
         $query->execute();
-        $execurtion=$query->fetch();
-        return $execurtion;
+        $camping=$query->fetch();
+        return $camping;
     }catch (Exception $e){
         $e->getMessage();
     }
