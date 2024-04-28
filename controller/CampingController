@@ -79,5 +79,32 @@ public function updateCamping($id,$camping){
         $e->getMessage();
 }
 }
+
+function searchCamping($rech){
+    $sql="SELECT * FROM campings where titre like '%$rech%' OR adresse like '%$rech%'";
+    $db = config::getConnexion();
+    try{
+        $liste = $db->query($sql);
+        return $liste;
+    }
+    catch (Exception $e){
+        die('Erreur: '.$e->getMessage());
+    }	
+}
+
+function sortCamping($sort){
+			
+
+    $sql="SELECT * FROM campings ORDER BY prix $sort";
+    $db = config::getConnexion();
+    try{
+        $liste = $db->query($sql);
+        return $liste;
+    }
+    catch (Exception $e){
+        die('Erreur: '.$e->getMessage());
+    }		
+}
+
 }
 ?>

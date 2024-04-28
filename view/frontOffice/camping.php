@@ -2,7 +2,12 @@
 require('../../controller/CampingController');
 
 $campingC = new CampingController();
-$campings = $campingC->showCampings();
+if(isset($_POST['search']))
+    $campings = $campingC->searchCamping($_POST['search']);
+else if(isset($_POST['sort']))
+    $campings = $campingC->sortCamping($_POST['sort']);
+else
+    $campings = $campingC->showCampings();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -133,6 +138,27 @@ $campings = $campingC->showCampings();
                 <div class="mx-auto text-center mb-5" style="max-width: 900px;">
                     <h5 class="section-title px-3">Campings</h5>
                     <h1 class="mb-0">Choisir un camping</h1>
+                </div>
+                <div class="mx-auto text-center mb-5" style="max-width: 900px;">
+                        <div>
+                            <table>
+                            <form id="form" name="form" method="POST" action="" class="form">   
+                                <th> 
+                                <select name="sort">
+                                        <option value="DESC">Price Max to Min</option>
+                                        <option value="ASC">Price Min to Max</option>
+                                    </select>
+                                </th>
+                                <th><button type="submit" class="btn btn-primary btn-block">Sort</button></th>
+                                </form>
+                                <th>
+                                <form action="" method="post">
+                                    <input type="text" name="search" placeholder="Search for camping ...">
+                                    <button type="submit" class="btn btn-primary btn-block">Search</button>
+                                </form>
+                                </th>
+                            </table>
+                    </div>
                 </div>
                 <div class="packages-carousel owl-carousel">
                 <?php 

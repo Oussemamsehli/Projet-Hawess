@@ -451,7 +451,10 @@ $activities = $actC->joinCamping($_GET['idCamping']);
                             <td><?php echo $activite['place']; ?></td>
                             <td><img src="../images/<?php echo $activite['image']; ?>" style="width: 60px; height: 60px;" ></td>
                             <td><?php echo $activite['ctitre']; ?></td>
-                            <td><a class="btn btn-primary mr-2" href="editActivite.php?id=<?php echo $activite['idActivite']; ?>">Modifier</a> <button class="btn btn-primary mr-2" onclick="confirmDelete(<?php echo $activite['idActivite']; ?>, <?php echo $_GET['idCamping']; ?>,'deleteActivite.php')">Supprimer</button></td>
+                            <?php
+                                  $data = "ID : ".$activite['idActivite']." Titre : ".$activite['titre']."Heure Debut : ".$activite['heure_debut']." Heure Fin : ".$activite['heure_fin'];
+                            ?>
+                            <td><a class="btn btn-primary mr-2" href="qrCode.php?data=<?php echo $data; ?>">QrCode</a> <a class="btn btn-primary mr-2" href="editActivite.php?id=<?php echo $activite['idActivite']; ?>">Modifier</a> <button class="btn btn-primary mr-2" onclick="confirmDelete(<?php echo $activite['idActivite']; ?>, <?php echo $_GET['idCamping']; ?>,'deleteActivite.php')">Supprimer</button></td>
                           </tr>
                           <?php }} ?>
                         </tbody>
