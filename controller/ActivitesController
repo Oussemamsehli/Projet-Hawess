@@ -1,6 +1,6 @@
 <?php
-require_once ('C:\wamp64\www\Oussema Msehli\config.php');
-include('C:\wamp64\www\Oussema Msehli\model\Activite');
+require_once ('C:\xampp\htdocs\Oussema Msehli\config.php');
+include('C:\xampp\htdocs\Oussema Msehli\model\Activite');
 
 class ActivitesController{
 public function showActivities()

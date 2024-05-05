@@ -1,10 +1,14 @@
 <?php
 require('../../controller/CampingController');
+require('../../controller/SMS.php');
 
 $campingC = new CampingController();
 if( isset($_POST['titre']) && isset($_POST['description']) && isset($_POST['adresse']) && isset($_POST['date_debut']) && isset($_POST['date_fin']) && isset($_POST['place']) && isset($_POST['prix']) && isset($_POST['image'])){
     $camping = new Camping($_POST['titre'],$_POST['description'],$_POST['adresse'],$_POST['date_debut'],$_POST['date_fin'],$_POST['prix'],$_POST['place'],$_POST['image']);
-    $campingC->addCamping($camping);
+    $campingC->addCamping($camping,$_POST['lang'],$_POST['lat']);
+    $smsService = new Sms();
+    $msg = "Nouveau Camping est ajouté : titre : ".$_POST['titre']." adresse : ".$_POST['adresse']." Prix : ".$_POST['prix'];
+    $smsService->sendSms($msg);
     header('Location: campingBack.php');
 }
 $campings = $campingC->showCampings();
@@ -30,6 +34,8 @@ $campings = $campingC->showCampings();
     <link rel="stylesheet" href="assets/css/style.css">
     <!-- End layout styles -->
     <link rel="shortcut icon" href="assets/images/favicon.png" />
+    <script src="https://cdn.maptiler.com/maptiler-sdk-js/v1.2.0/maptiler-sdk.umd.min.js"></script>
+    <link href="https://cdn.maptiler.com/maptiler-sdk-js/v1.2.0/maptiler-sdk.css" rel="stylesheet" />
   </head>
   <body>
     <div class="container-scroller">
@@ -330,6 +336,8 @@ $campings = $campingC->showCampings();
                       <div class="form-group">
                         <label for="adresse">Adresse</label>
                         <input type="text" class="form-control" id="adresse" name="adresse" placeholder="Adresse">
+                        <input type="text" class="form-control" id="lang" name="lang" hidden>
+                        <input type="text" class="form-control" id="lat" name="lat" hidden>
                         <span id="errorAdresse"></span>
                       </div>
                       <div class="form-group">
@@ -365,6 +373,65 @@ $campings = $campingC->showCampings();
                       </div>
                       <button type="submit" class="btn btn-primary mr-2">Ajouter</button>
                     </form>
+                    <style>
+              #map {  width: 500px; height:600px; }
+            </style>
+            <div class="col-lg-12 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <div id="map"></div>
+                  </div>
+                </div>
+            </div>
+              <script>
+              function initializeMap() {
+                      maptilersdk.config.apiKey = 'EaPeZP1b4yoxXOXu46vm';
+                      const map = new maptilersdk.Map({
+                        container: 'map', // container's id or the HTML element to render the map
+                        style: maptilersdk.MapStyle.STREETS,
+                        center: [16.62662018, 49.2125578], // starting position [lng, lat]
+                        zoom: 14, // starting zoom
+                      });
+                  const marker = new maptilersdk.Marker()
+                      .setLngLat([10.180356455967974, 36.80766601939333])
+                      .addTo(map);
+
+                  map.on('click', function(event) {
+                      const coordinates = [event.lngLat.lng, event.lngLat.lat]; // Convert to [lng, lat] format
+                      updateMarker(coordinates);
+                      reverseGeocode(coordinates);
+                  });
+
+                  // Function to update marker position
+                  function updateMarker(coordinates) {
+                      marker.setLngLat(coordinates);
+                  }
+
+                  // Function to perform reverse geocoding
+                  async function reverseGeocode(coordinates) {
+                      const results = await maptilersdk.geocoding.reverse(coordinates);
+                      displayAddress(results);
+                  }
+
+                  // Function to display the reverse geocoded address
+              function displayAddress(results) {
+                      const addressElements = document.getElementById('adresse');
+                      const lang = document.getElementById('lang');
+                      const lat = document.getElementById('lat');
+                      if (results && results.features && results.features.length > 0) {
+                          const address = results.features[0].place_name_fr;
+                              addressElements.value=address;
+                              lang.value = results.features[0].center[0];
+                              lat.value = results.features[0].center[1];
+                          }
+                      else {
+                              addressElements.innerText = 'Address not found';
+                          
+                      }
+                  }
+              }
+              initializeMap();
+                </script>
                     <script>
                       // Contrôle de saisie
                       let myForm = document.getElementById('myForm');
@@ -456,7 +523,6 @@ $campings = $campingC->showCampings();
                           });
                       }
                   </script>
-
                   </div>
                 </div>
               </div>
@@ -496,6 +562,10 @@ $campings = $campingC->showCampings();
                             <td><?php echo $camping['place']; ?></td>
                             <td><?php echo $camping['prix']; ?></td>
                             <td><img src="../images/<?php echo $camping['image']; ?>" style="width: 60px; height: 60px;" ></td>
+                            <?php
+                                  $data = "ID : ".$camping['idCamping']." Titre : ".$camping['titre']."Adresse : ".$camping['adresse']." Prix : ".$camping['prix'];
+                            ?>
+                            <td><a class="btn btn-primary mr-2" href="qrCode.php?data=<?php echo $data; ?>">QrCode</a></td>
                             <td><a class="btn btn-primary mr-2" href="activiteBack.php?idCamping=<?php echo $camping['idCamping']; ?>">Activité</a> <a class="btn btn-primary mr-2" href="editCamping.php?id=<?php echo $camping['idCamping']; ?>">Modifier</a> <button class="btn btn-primary mr-2" onclick="confirmDelete(<?php echo $camping['idCamping']; ?>, 'deleteCamping.php')">Supprimer</button></td>
                           </tr>
                           <?php }} ?>
@@ -513,6 +583,48 @@ $campings = $campingC->showCampings();
                   </div>
                 </div>
               </div>
+              <div class="container-fluid pt-4 px-4">
+                <?php
+                     $db = config::getConnexion();
+                     $sql = "SELECT c.titre, COUNT(a.camping) AS nombre_activities FROM campings c INNER JOIN activites AS a ON c.idCamping = a.camping GROUP BY c.titre ORDER BY nombre_activities DESC LIMIT 3";
+                     $query = $db->prepare($sql);
+                     $query->execute();
+                     $stat = $query->fetchAll();
+                    ?>
+            <div class="container-fluid pt-4 px-4">
+                <h2>Most Campings have activities :</h2>
+                <div style="width: 80%; margin: auto;">
+                    <canvas id="barChart"></canvas>
+                </div>
+            </div>
+
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script>
+                var labels = <?php echo json_encode(array_column($stat, 'titre')); ?>;
+                var data = <?php echo json_encode(array_column($stat, 'nombre_activities')); ?>;
+                var ctx = document.getElementById('barChart').getContext('2d');
+                var barChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Number of Activities',
+                            data: data,
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            </script>
+            </div>
               
             </div>
           </div>

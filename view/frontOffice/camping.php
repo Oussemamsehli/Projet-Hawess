@@ -158,7 +158,7 @@ else
                                 </form>
                                 </th>
                             </table>
-                    </div>
+                        </div>
                 </div>
                 <div class="packages-carousel owl-carousel">
                 <?php 

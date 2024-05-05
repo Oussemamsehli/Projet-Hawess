@@ -36,6 +36,8 @@ $camping = $campingC->getCamping($_GET['id']);
 
         <!-- Template Stylesheet -->
         <link href="css/style.css" rel="stylesheet">
+        <script src="https://cdn.maptiler.com/maptiler-sdk-js/v1.2.0/maptiler-sdk.umd.min.js"></script>
+        <link href="https://cdn.maptiler.com/maptiler-sdk-js/v1.2.0/maptiler-sdk.css" rel="stylesheet" />
     </head>
 
     <body>
@@ -131,12 +133,30 @@ $camping = $campingC->getCamping($_GET['id']);
         <!-- Header End -->
 
         <!-- Packages Start -->
-        <div class="container-fluid packages py-5">
-            <div class="container py-5">
-                <div class="mx-auto text-center mb-5" style="max-width: 900px;">
-                    <h5 class="section-title px-3">Camping : <?php echo $camping['titre']; ?></h5>
-                    <h1 class="mb-0">Liste des activités</1>
-                </div>
+            <div class="container-fluid packages py-5">
+                <div class="container py-5">
+                    <div class="mx-auto text-center mb-5" style="max-width: 900px;">
+                        <h5 class="section-title px-3">Camping : <?php echo $camping['titre']; ?></h5>
+                        <input type="text" id="lang" hidden value="<?php echo $camping['lang']; ?>">
+                        <input type="text" id="lat" hidden value="<?php echo $camping['lat']; ?>">
+                        <div id="map" style="height: 400px;"></div>  
+                        <script>
+                            const lang = document.getElementById('lang').value; 
+                            const lat = document.getElementById('lat').value; 
+                            function initializeMap() {
+                                maptilersdk.config.apiKey = 'EaPeZP1b4yoxXOXu46vm';
+                                const map = new maptilersdk.Map({
+                                    container: 'map',
+                                    style: maptilersdk.MapStyle.STREETS,
+                                    center: [lang, lat],
+                                    zoom: 14,
+                                });
+                                const marker = new maptilersdk.Marker().addTo(map);
+                            }
+                            initializeMap();
+                        </script>
+                        <h1 class="mb-0">Liste des activités</1>
+                    </div>
                 <div class="packages-carousel owl-carousel">
                 <?php 
                             if (!empty($activities)) {

@@ -1,6 +1,6 @@
 <?php
-require_once ('C:\wamp64\www\Oussema Msehli\config.php');
-include('C:\wamp64\www\Oussema Msehli\model\Camping');
+require_once ('C:\xampp\htdocs\Oussema Msehli\config.php');
+include('C:\xampp\htdocs\Oussema Msehli\model\Camping');
 
 class CampingController{
 public function showCampings()
@@ -27,9 +27,9 @@ public function deleteCamping($id){
         $e->getMessage();
     }
 }
-public function addCamping($camping){
-    $sql = "INSERT INTO campings (titre,description,adresse,date_debut,date_fin,place,prix,image)
-    VALUES (:titre, :description, :adresse, :date_debut, :date_fin, :place,:prix,:image)";
+public function addCamping($camping,$lang,$lat){
+    $sql = "INSERT INTO campings (titre,description,adresse,date_debut,date_fin,place,prix,image,lang,lat)
+    VALUES (:titre, :description, :adresse, :date_debut, :date_fin, :place,:prix,:image,:lang,:lat)";
     $db = config::getConnexion();
     try{
         $query = $db->prepare($sql);
@@ -42,6 +42,8 @@ public function addCamping($camping){
         'place'=> $camping->getPlace(),
         'prix'=> $camping->getPrix(),
         'image'=> $camping->getImage(),
+        'lang' => $lang,
+        'lat' => $lat
         ]);
     } catch (Exception $e){
         $e->getMessage();
