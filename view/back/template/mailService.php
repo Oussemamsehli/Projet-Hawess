@@ -2,11 +2,12 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-
-
-require 'C:/Users/sadok/OneDrive/Desktop/PHPMailer-master/PHPMailer-master/src/PHPMailer.php';
-require 'C:/Users/sadok/OneDrive/Desktop/PHPMailer-master/PHPMailer-master/src/SMTP.php';
-require 'C:/Users/sadok/OneDrive/Desktop/PHPMailer-master/PHPMailer-master/src/Exception.php';
+/*require_once 'C:/xampp/htdocs/Projet-Hawess-forum/view/PHPMailer-master/src/PHPMailer.php';
+require_once 'C:/xampp/htdocs/Projet-Hawess-forum/view/PHPMailer-master/src/SMTP.php';
+require_once 'C:/xampp/htdocs/Projet-Hawess-forum/view/PHPMailer-master/src/Exception.php';*/
+require '../../PHPMailer-master/src/PHPMailer.php';
+require '../../PHPMailer-master/src/SMTP.php';
+require '../../PHPMailer-master/src/Exception.php';
 
 
 class EmailService
@@ -29,8 +30,8 @@ class EmailService
             $this->mailer->isSMTP();
             $this->mailer->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
             $this->mailer->SMTPAuth = true;
-            $this->mailer->Username = 'attia1232020@gmail.com';  // SMTP username
-            $this->mailer->Password = 'iazrrhplbjawynai';  // SMTP password
+            $this->mailer->Username = 'sadok0703@gmail.com';  // SMTP username
+            $this->mailer->Password = 'omqg xoaw sqsv wvdl';  // SMTP password
             $this->mailer->SMTPSecure = 'tls';  // Enable TLS encryption, `ssl` also accepted
             $this->mailer->Port = 587;  // TCP port to connect to
         } catch (Exception $e) {
@@ -43,7 +44,7 @@ class EmailService
     {
         try {
             // Recipients
-            $this->mailer->setFrom('x@x.com', 'Your Response');
+            $this->mailer->setFrom('HAWESS@gamil.com', 'Your Response');
             $this->mailer->addAddress($recipient);
 
             // Content

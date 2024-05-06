@@ -157,10 +157,10 @@ $posts = $postController->getAllPosts();
                     Options
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <li> <button type="button" class="btn btn-info edit-post-btn" data-bs-toggle="modal" data-bs-target="#editPostModal" data-post-id="<?php echo $post['ID']; ?>" data-post='<?php echo json_encode($post); ?>'>Edit</button></li>
+                    <li> <button type="button" class="btn btn-info edit-post-btn" data-bs-toggle="modal" data-bs-target="#editPostModal" data-post-id="<?php echo $post['id']; ?>" data-post='<?php echo json_encode($post); ?>'>Edit</button></li>
                     <li>
                     <form action="deletePostHandler.php" method="post">
-                    <input type="hidden" name="postId" value="<?php echo $post['ID']; ?>">
+                    <input type="hidden" name="postId" value="<?php echo $post['id']; ?>">
                     <button type="submit" class="dropdown-item" onclick="return confirm('Are you sure you want to delete this post?')">Delete</button>
                 </form>
                 </li>
@@ -177,12 +177,12 @@ $posts = $postController->getAllPosts();
                 </div>
                
                 <div class="blog-info d-flex align-items-center border border-start-0 border-end-0">
-                    <small class="flex-fill text-center border-end py-2"><i class="fa fa-calendar-alt text-primary me-2"></i><?php echo date("d M Y", strtotime($post['Timestamp'])); ?></small>
+                    <small class="flex-fill text-center border-end py-2"><i class="fa fa-calendar-alt text-primary me-2"></i><?php echo date("d M Y", strtotime($post['timestamp'])); ?></small>
                     <?php
 // Assuming $likeDislikeController is an instance of LikeDislikeController
 
-$likeCount = $likeDislikeController->getLikeCount($post['ID']);
-$dislikeCount = $likeDislikeController->getDislikeCount($post['ID']);
+$likeCount = $likeDislikeController->getLikeCount($post['id']);
+$dislikeCount = $likeDislikeController->getDislikeCount($post['id']);
 
 ?>
                     
@@ -191,25 +191,25 @@ $dislikeCount = $likeDislikeController->getDislikeCount($post['ID']);
                   
 
                      <form class="flex-fill text-center border-end py-2 like-dislike-form" action="like_dislike_handler.php" method="post">
-        <input type="hidden" name="postId" value="<?php echo $post['ID']; ?>">
-        <input type="hidden" name="userId" value="<?php echo $post['UserID']; ?>">
+        <input type="hidden" name="postId" value="<?php echo $post['id']; ?>">
+        <input type="hidden" name="userId" value="<?php echo $post['userId']; ?>">
         <input type="hidden" name="action" value="like">
         <button type="submit" class="btn-hover text-center text-white py-2">
             <i class="fa fa-thumbs-up text-primary me-2"></i><?php echo $likeCount; ?>
         </button>
     </form>
     <form class="flex-fill text-center text-white py-2 like-dislike-form" action="like_dislike_handler.php" method="post">
-        <input type="hidden" name="postId" value="<?php echo $post['ID']; ?>">
-        <input type="hidden" name="userId" value="<?php echo $post['UserID']; ?>">
+        <input type="hidden" name="postId" value="<?php echo $post['id']; ?>">
+        <input type="hidden" name="userId" value="<?php echo $post['userId']; ?>">
         <input type="hidden" name="action" value="dislike">
         <button type="submit" class="btn-hover text-center text-white py-2">
             <i class="fa fa-thumbs-down text-primary me-2"></i><?php echo $dislikeCount; ?>
         </button>
     </form>
                     
-                    <a href="#" class="btn-hover flex-fill text-center text-white py-2 comment-icon" data-post-id="<?php echo $post['ID']; ?>">
+                    <a href="#" class="btn-hover flex-fill text-center text-white py-2 comment-icon" data-post-id="<?php echo $post['id']; ?>">
                     <i class="fa fa-comments text-primary me-2"> </i><?php
-                $commentsData = $commentController->getCommentsByPostId($post['ID']);
+                $commentsData = $commentController->getCommentsByPostId($post['id']);
                 $commentCount = $commentsData['commentCount'];
                 echo  $commentCount
                 ?>
@@ -220,22 +220,23 @@ $dislikeCount = $likeDislikeController->getDislikeCount($post['ID']);
 </div>
             <div class="blog-content border border-top-0 rounded-bottom p-4">
            
-                <p class="mb-3">Posted By: <?php echo $post['UserID']; ?></p>
+                <p class="mb-3">Posted By: <?php echo $post['userId']; ?></p>
                 <a href="#" class="h4"><?php echo $post['title']; ?></a>
-                <p class="my-3"><?php echo $post['Content']; ?></p>
+                <p class="my-3"><?php echo $post['content']; ?></p>
                 <a href="#" class="btn btn-primary rounded-pill py-2 px-4">Read More</a>
             </div>
-            <div class="comments-container" id="comments-container-<?php echo $post['ID']; ?>" style="display: none;">
+            <div class="comments-container" id="comments-container-<?php echo $post['id']; ?>" style="display: none;">
             <?php
                 $comments = $commentsData['comments'];
                 foreach ($comments as $comment) {
-                    echo '<div class="comment">' . $comment['Content'] . '</div>';
+                    echo '<div class="comment">' . $comment['content'] . '</div>';
                 }
                 ?>
             </div>
-            <div style="display: none;" class="comment-input" id="comment-input-<?php echo $post['ID']; ?>">
+            <div style="display: none" class="comment-input" id="comment-input-<?php echo $post['id']; ?>">
                     <form method="post" action="createComment.php">
-                        <input type="hidden" name="postId" value="<?php echo $post['ID']; ?>">
+                    <input type="hidden" name="postId" value="<?php echo $post['id']; ?>">
+                     <input type="hidden" name="userId" value="<?php echo $post['userId']; ?>">
                         <input type="text" class="form-control" placeholder="Write your comment here" name="content">
                         <button type="submit" class="btn btn-primary mt-2">Submit</button>
                     </form>
@@ -347,21 +348,21 @@ $dislikeCount = $likeDislikeController->getDislikeCount($post['ID']);
 </script>
         <!-- Blog End -->
 
-        <!-- Subscribe Start -->
+        <!-- Reclamation debut  -->
         <div class="container-fluid subscribe py-5">
     <div class="container text-center py-5">
         <div class="mx-auto text-center" style="max-width: 900px;">
             <h5 class="subscribe-title px-3">Subscribe</h5>
-            <h1 class="text-white mb-4">Our Newsletter</h1>
+            <h1 class="text-white mb-4">put your Reclamation</h1>
             <p class="text-white mb-5">Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum tempore nam, architecto doloremque velit explicabo? Voluptate sunt eveniet fuga eligendi! Expedita laudantium fugiat corrupti eum cum repellat a laborum quasi.</p>
-            <form action="createRecl.php" method="post" enctype="multipart/form-data">
-                <div class="position-relative mx-auto">
-                    <input class="form-control border-primary rounded-pill w-100 py-3 ps-4 pe-5 mb-3" type="text" name="message" placeholder="Your message">
-                    <input class="form-control border-primary rounded-pill w-100 py-3 ps-4 pe-5 mb-3" type="text" name="sujet" placeholder="Subject">
-                    <input class="form-control border-primary rounded-pill w-100 py-3 ps-4 pe-5 mb-3" type="file" name="file">
-                    <button type="submit" class="btn btn-primary rounded-pill py-2 px-4">Submit</button>
-                </div>
-            </form>
+            <form id="reclamationForm" action="createRecl.php" method="post" onsubmit="return validateForm(event)" enctype="multipart/form-data">
+    <div class="position-relative mx-auto">
+        <input id="messageInput" class="form-control border-primary rounded-pill w-100 py-3 ps-4 pe-5 mb-3" type="text" name="message" placeholder="enter Your message please eleborate">
+        <input id="sujetInput" class="form-control border-primary rounded-pill w-100 py-3 ps-4 pe-5 mb-3" type="text" name="sujet" placeholder="Subject of the issue">
+        <input id="fileInput" class="form-control border-primary rounded-pill w-100 py-3 ps-4 pe-5 mb-3" type="file" name="file">
+        <button type="submit" class="btn btn-primary rounded-pill py-2 px-4">Submit</button>
+    </div>
+</form>
         </div>
     </div>
 </div>
@@ -470,7 +471,45 @@ $dislikeCount = $likeDislikeController->getDislikeCount($post['ID']);
 
         <!-- Template Javascript -->
         <script src="js/main.js"></script>
-        
+        <script>
+    function validateForm(event) {
+        event.preventDefault();
+
+// Get form inputs
+var messageInput = document.getElementById('messageInput');
+var sujetInput = document.getElementById('sujetInput');
+var fileInput = document.getElementById('fileInput');
+
+// Validate message input (required)
+if (!messageInput.value.trim()) {
+    alert('Please enter your message');
+    messageInput.focus();
+    return false;
+}
+
+// Validate sujet input (required)
+if (!sujetInput.value.trim()) {
+    alert('Please enter the subject of the issue');
+    sujetInput.focus();
+    return false;
+}
+
+// Validate file input (optional)
+if (fileInput.value.trim() && !/\.(jpg|jpeg|png)$/i.test(fileInput.value)) {
+    alert('Please select a valid image file (jpg, jpeg, or png)');
+    fileInput.value = '';
+    fileInput.focus();
+    return false;
+}
+
+// Submit the form if all inputs are valid
+document.getElementById('reclamationForm').submit();
+    }
+
+       
+</script>
+
+       
     </body>
 
 </html>

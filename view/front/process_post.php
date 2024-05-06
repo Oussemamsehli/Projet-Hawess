@@ -19,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Check if file is uploaded successfully
     if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
         // Define the destination directory and file path
-        $uploadDir = 'C:/xampp/htdocs/projetPi/view/front/uploads/';
+        $uploadDir = 'C:/xampp/htdocs/Projet-Hawess-forum/view/front/uploads/';
         $imagePath = $uploadDir . basename($_FILES["image"]["name"]); 
 
         // Move uploaded file to the specified directory

@@ -344,4 +344,16 @@ h6 {
 	margin-left: 0;
 }
 
+.response-wrapper {
+  background-color: #f5f5f5; /* Lighter background color */
+  border-radius: 10px; /* Rounded corners */
+  padding: 10px; /* Add some padding for spacing */
+  margin-top: 10px; /* Add margin to separate it from the previous content */
+}
+
+/* Optionally, you can style the response text differently */
+.response-wrapper p {
+  color: #333; /* Darker text color */
+}
+
 /* Pws-tabs end */

@@ -2,9 +2,9 @@
  require_once "C:/xampp/htdocs/Projet-Hawess-forum/config.php";
  include "C:/xampp/htdocs/Projet-Hawess-forum/model/comment.php"; 
  class CommentController {
-    public function createComment($postId,  $userId,$content) {
+    public function createComment($postId,$userId,$content) {
         $timestamp = date("Y-m-d H:i:s");
-        $comment = new Comment($postId, null, $content,  $timestamp);
+        $comment = new Comment($postId,$userId, $content,  $timestamp);
         
         $sql = "INSERT INTO comment (PostID,UserID, Content,  Timestamp) VALUES (:postId,:userId, :content, :timestamp)";
         

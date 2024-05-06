@@ -58,6 +58,18 @@ private function getUserEmail($reclamationId) {
     }
     return null;
 }
+public function getResponsesByReclamationId($reclamationId) {
+    $sql = "SELECT * FROM response WHERE id_reclamation = :reclamationId";
+    $db = config::getConnexion();
+    try {
+        $query = $db->prepare($sql);
+        $query->execute(['reclamationId' => $reclamationId]);
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    } catch(Exception $e) {
+        die('Error: ' . $e->getMessage());
+    }
+    return [];
+}
 
 
 }

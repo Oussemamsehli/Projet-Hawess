@@ -3,17 +3,11 @@ require_once "C:/xampp/htdocs/Projet-Hawess-forum/controller/reclamationControll
 
 
  $reclamationController = new reclamationC();
- $page = isset($_GET['page']) ? $_GET['page'] : 1;
- $perPage = 2;
 
-// $reclamations = $reclamationController->afficherReclamation();
-$reclamationData = $reclamationController->afficherReclamation($page, $perPage);
-$reclamations = $reclamationData['reclamations'];
-$totalReclamations = $reclamationData['totalReclamations'];
 
-// Calculate total number of pages
-$totalPages = ceil($totalReclamations / $perPage);
+$reclamations = $reclamationController->afficherReclamationByClientIdAndStatus(1);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -30,6 +24,7 @@ $totalPages = ceil($totalReclamations / $perPage);
     <link rel="stylesheet" href="assets/vendors/flag-icon-css/css/flag-icon.min.css">
     <link rel="stylesheet" href="assets/vendors/owl-carousel-2/owl.carousel.min.css">
     <link rel="stylesheet" href="assets/vendors/owl-carousel-2/owl.theme.default.min.css">
+    <link rel="stylesheet" href="style.css">
     <!-- End plugin css for this page -->
     <!-- inject:css -->
     <!-- endinject -->
@@ -140,13 +135,14 @@ $totalPages = ceil($totalReclamations / $perPage);
             </a>
           </li>
           <li class="nav-item menu-items">
-            <a class="nav-link" href="./statistiqueAdmin.php">
+            <a class="nav-link" href="pages/charts/chartjs.html">
               <span class="menu-icon">
                 <i class="mdi mdi-chart-bar"></i>
               </span>
-              <span class="menu-title">Statistique</span>
+              <span class="menu-title">Charts</span>
             </a>
           </li>
+          
           <li class="nav-item menu-items">
             <a class="nav-link" href="pages/icons/mdi.html">
               <span class="menu-icon">
@@ -378,104 +374,105 @@ $totalPages = ceil($totalReclamations / $perPage);
             </button>
           </div>
         </nav>
-
-      
         <!-- partial -->
         <div class="main-panel">
           <div class="content-wrapper">
-         
-          <div class="row">
-    <div class="col-12 grid-margin">
+            <div class="row">
+              
+            </div>
+            <div class="row">
+    <div class="col-md-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">All Reclamations</h4>
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Message</th>
-                                <th>Subject</th>
-                                <th>Status</th>
-                                <th>Client</th>
-                                <th>File</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($reclamations as $reclamation) { ?>
-                              <?php 
-                                 $chaine = $reclamation['message'];
-                                 $premiersCaracteres = substr($chaine, 0, 20);
-                                ?>
-                                <tr>
-                                   
-                                    <td><?php  echo $premiersCaracteres; ?></td>
-                                    <td><?php echo $reclamation['sujet']; ?></td>
-                                    <td><?php echo $reclamation['statut']; ?></td>
-                                    <td><?php echo $reclamation['client']; ?></td>
-                                    <td><?php echo $reclamation['file']; ?></td>
-                                    <td>
-                                   <!-- <button type="submit" class="btn btn-primary">ouvrir</button>-->
-    <button type="button" class="btn btn-primary respond-btn" data-reclamation-id="<?php echo $reclamation['id_reclamation']; ?>">Respond</button>
-                                     </td>
-                                </tr>
-                            <?php } ?>
-                        </tbody>
-                    </table>
+                <div class="d-flex flex-row justify-content-between">
+                    <h4 class="card-title">Reclamations</h4>
+                    <p class="text-muted mb-1 small">View all</p>
                 </div>
-                <div class="pagination">
-    <?php if ($page > 1) { ?>
-        <a href="?page=<?php echo $page - 1; ?>">Previous</a>
-    <?php } ?>
-    <?php for ($i = 1; $i <= $totalPages; $i++) { ?>
-        <a href="?page=<?php echo $i; ?>" <?php echo ($page == $i) ? 'class="active"' : ''; ?>><?php echo $i; ?></a>
-    <?php } ?>
-    <?php if ($page < $totalPages) { ?>
-        <a href="?page=<?php echo $page + 1; ?>">Next</a>
-    <?php } ?>
-</div>
+                <div class="preview-list">
+                    <?php foreach ($reclamations as $reclamation) { ?>
+                        <div class="status">
+                            <span class="status-text"><?php echo $reclamation['statut'] == 1 ? 'En cour de traitement' : 'En attente'; ?></span>
+                        </div>
+                        <div class="preview-item border-bottom">
+                            <div class="preview-thumbnail">
+                                <img src="assets/images/faces/face6.jpg" alt="image" class="rounded-circle" />
+                            </div>
+                            <div class="preview-item-content d-flex flex-grow">
+                                <div class="flex-grow">
+                                    <div class="d-flex d-md-block d-xl-flex justify-content-between">
+                                        <h6 class="preview-subject"><?php echo $reclamation['client']; ?></h6>
+                                        
+                                    </div>
+                                    <p class="text-muted"><?php echo $reclamation['message']; ?></p>
+                                </div>
+                            </div>
+                            <button class="voir-plus-btn" data-reclamation-id="<?php echo $reclamation['id_reclamation']; ?>">Voir plus</button>
+                        </div>
+                        <!-- Réponse à la réclamation -->
+                        <div class="response-wrapper" id="response-wrapper-<?php echo $reclamation['id_reclamation']; ?>" style="display: none;">
+                        
+                            <div class="preview-item border-bottom">
+                                <div class="preview-thumbnail">
+                                    <img src="assets/images/faces/face8.jpg" alt="image" class="rounded-circle" />
+                                </div>
+                                <div class="preview-item-content d-flex flex-grow">
+                                <div class="flex-grow">
+                                            <div class="d-flex d-md-block d-xl-flex justify-content-between">
+                                                <h6 class="preview-subject"><?php echo $response['context']; ?></h6>
+                                                <p class="text-muted text-small"><?php echo $response['timestamp']; ?></p>
+                                            </div>
+                                            <p class="text-muted"><?php echo $response['message']; ?></p>
+                                        </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    <?php } ?>
+                </div>
             </div>
         </div>
     </div>
 </div>
-     
-      
+
            
-            </div>
-          
+           
+            
+       
+            
           </div>
-         
-            <!--///////////////////////////////////////////////////////////-->
-     <!-- Define a modal for response -->
-     <div class="modal fade" id="responseModal" tabindex="-1" aria-labelledby="responseModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="responseModalLabel">Respond to Reclamation</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <!-- chat bot -->
+
+
+          <div class="container">
+    <div class="chatbox">
+        <div class="chatbox__support">
+            <div class="chatbox__header">
+                <div class="chatbox__image--header">
+                    <img src="https://img.icons8.com/color/48/000000/circled-user-female-skin-type-5--v1.png" alt="image">
+                </div>
+                <div class="chatbox__content--header">
+                    <h4 class="chatbox__heading--header">Chat support</h4>
+                    <p class="chatbox__description--header">Hi. My name is Sam. How can I help you?</p>
+                </div>
             </div>
-            <div class="modal-body">
-                <form id="responseForm" action="response_page.php" method="post" onsubmit=" validateResponseForm(event)">
-                    <input type="hidden" id="reclamationIdInput" name="reclamationId">
-                    <div class="mb-3">
-                        <label for="responseMessage" class="form-label">Response Message</label>
-                        <textarea class="form-control" id="responseMessage" name="responseMessage" rows="3"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="responseContext" class="form-label">Response Context</label>
-                        <input type="text" class="form-control" id="responseContext" name="responseContext">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </form>
+            <div class="chatbox__messages">
+                <div></div>
             </div>
+            <div class="chatbox__footer">
+                <input type="text" placeholder="Write a message...">
+                <button class="chatbox__send--footer send__button">Send</button>
+            </div>
+        </div>
+        <div class="chatbox__button">
+            <button><img src="./images/chatbox-icon.svg" /></button>
         </div>
     </div>
 </div>
 
+    <script src="./app.js"></script>
+    <!-- chatbot -->
 
 
-
-        <!--///////////////////////////////////////////////////////////-->
           <!-- content-wrapper ends -->
           <!-- partial:partials/_footer.html -->
           <footer class="footer">
@@ -486,7 +483,6 @@ $totalPages = ceil($totalReclamations / $perPage);
           </footer>
           <!-- partial -->
         </div>
-      
         <!-- main-panel ends -->
       </div>
       <!-- page-body-wrapper ends -->
@@ -512,57 +508,34 @@ $totalPages = ceil($totalReclamations / $perPage);
     <!-- Custom js for this page -->
     <script src="assets/js/dashboard.js"></script>
     <!-- End custom js for this page -->
-
     <script>
-    // Handle click event of the Respond button
-    document.querySelectorAll('.respond-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            // Get the reclamation ID from data attribute
+document.addEventListener("DOMContentLoaded", function() {
+    // Add click event listener to voir plus button
+    const voirPlusButtons = document.querySelectorAll('.voir-plus-btn');
+    voirPlusButtons.forEach(button => {
+        button.addEventListener('click', function() {
             const reclamationId = this.getAttribute('data-reclamation-id');
-            // Set the reclamation ID to the hidden input field in the modal form
-            document.getElementById('reclamationIdInput').value = reclamationId;
-            // Open the modal
-            const modal = new bootstrap.Modal(document.getElementById('responseModal'));
-            modal.show();
+            const responseWrapper = document.getElementById('response-wrapper-' + reclamationId);
+            // Toggle display of response wrapper
+            if (responseWrapper.style.display === 'none') {
+                responseWrapper.style.display = 'block';
+                // Fetch responses via AJAX and append them to the response wrapper
+                fetchResponses(reclamationId, responseWrapper);
+            } else {
+                responseWrapper.style.display = 'none';
+            }
         });
     });
-  </script>
-  <script>
-   function validateResponseForm(event) {
-     // Empêcher la soumission automatique du formulaire
 
-    var responseMessage = document.getElementById("responseMessage").value;
-    var responseContext = document.getElementById("responseContext").value;
-
-    // Vérifier si les champs sont vides
-    if (responseMessage.trim() === "" || responseContext.trim() === "") {
-        alert("Both fields are required");
-        event.preventDefault(); ;
+    function fetchResponses(reclamationId, responseWrapper) {
+        fetch('fetch_responses.php?reclamationId=' + reclamationId)
+            .then(response => response.text())
+            .then(data => {
+                responseWrapper.innerHTML = data;
+            })
+            .catch(error => console.error('Error:', error));
     }
-
-    // Vérifier si les champs ne sont pas des chiffres
-    if (!isNaN(responseMessage) || !isNaN(responseContext)) {
-        alert("Fields cannot be numeric");
-        event.preventDefault(); ;
-    }
-
-    // Vérifier si le contexte de réponse ne commence pas par un chiffre
-    if (!isNaN(responseContext.charAt(0))) {
-        alert("Response context cannot start with a number");
-        event.preventDefault(); ;
-    }
-
-    // Vérifier si la longueur du contexte de réponse ne dépasse pas 25 caractères
-    if (responseContext.length > 25) {
-        alert("Response context must be maximum 25 characters long");
-        event.preventDefault(); ;
-    }
-
-    // Si toutes les conditions sont remplies, le formulaire est valide
-   
-}
+});
 </script>
-
-
   </body>
 </html>

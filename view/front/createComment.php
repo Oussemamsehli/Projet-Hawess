@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Assuming you have a form field named 'content' for the comment content
     
     $postId = $_POST['postId'];
-    $userId = null; // As requested, set the user ID to null
+    $userId = $_POST['userId']; // As requested, set the user ID to null
     $content = filterBadWords($_POST['content']);
      
 

@@ -2,6 +2,29 @@
 
 include "../../controller/reclamationController.php"; 
 
+function filterBadWords($content) {
+   
+    $badWords = array("badword1", "badword2", "badword3");
+
+   
+    $words = explode(" ", $content);
+
+    
+    foreach ($words as &$word) {
+       
+        if (in_array(strtolower($word), $badWords)) {
+           
+            $word = str_repeat(" ", strlen($word));
+        }
+    }
+
+    
+    $filteredContent = implode(" ", $words);
+
+    return $filteredContent;
+}
+
+
 
 
 
@@ -16,7 +39,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Check if all required fields are set
     if (isset($_POST['message']) && isset($_POST['sujet']) && isset($_FILES['file'])) {
         // Get form data
-        $message = $_POST['message'];
+        $message = filterBadWords($_POST['message']);
+        //$message = $_POST['message'];
         $sujet = $_POST['sujet'];
         $file = $_FILES['file'];
 
@@ -39,4 +63,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Handle missing fields error
         echo "Missing required fields!";
     }
+   
+    header("Location: all_posts.php");
 }
